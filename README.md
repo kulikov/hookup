@@ -1,4 +1,11 @@
-# Webhooker
+# WebHooker
+
+Simple http service, listen web hooks form:
+
+ * github
+
+And call all handlers scripts, found at `--handlers` path
+
 
 ```
 NAME:
