@@ -11,6 +11,7 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"net/http"
 )
 
 func main() {
@@ -28,16 +29,20 @@ func main() {
 			Usage: "Path to dir with webhook handlers scripts",
 			Value: "/etc/webhooker.d/",
 		},
+		cli.StringSliceFlag{
+			Name:  "github-secret",
+			Usage: "Secret keys for github hooks",
+		},
 	}
 
 	app.Action = func(c *cli.Context) {
-		StartWebHookServer(c.Int("port"), c.String("handlers"))
+		StartWebHookServer(c.Int("port"), c.String("handlers"), c)
 	}
 
 	app.Run(os.Args)
 }
 
-func StartWebHookServer(port int, handlersDir string) {
+func StartWebHookServer(port int, handlersDir string, ctx *cli.Context) {
 	ec := echo.New()
 	ec.Use(middleware.Logger())
 	ec.Use(middleware.Recover())
@@ -47,6 +52,10 @@ func StartWebHookServer(port int, handlersDir string) {
 
 		eventType := c.Request().Header.Get("X-GitHub-Event")
 		payload, err := ioutil.ReadAll(c.Request().Body)
+
+		if err := checkSecret(c.Request(), ctx.StringSlice("github-secret")); err != nil {
+			return err
+		}
 
 		log.Printf("Receive github event '%s': \n%s\n", eventType, string(payload))
 
@@ -60,6 +69,25 @@ func StartWebHookServer(port int, handlersDir string) {
 	log.Printf("Starting web hook server on :%v\n", port)
 
 	ec.Run(":" + strconv.Itoa(port))
+}
+
+func checkSecret(req *http.Request, secrets []string) error {
+	if len(secrets) > 0 {
+		sig := req.Header.Get("X-Hub-Signature")
+
+		if sig == "" {
+			return http.Error("403 Forbidden - Missing X-Hub-Signature required for HMAC verification", http.StatusForbidden)
+		}
+
+		mac := hmac.New(sha1.New, []byte(s.Secret))
+		mac.Write(body)
+		expectedMAC := mac.Sum(nil)
+		expectedSig := "sha1=" + hex.EncodeToString(expectedMAC)
+		if !hmac.Equal([]byte(expectedSig), []byte(sig)) {
+			http.Error(w, "403 Forbidden - HMAC verification failed", http.StatusForbidden)
+			return
+		}
+	}
 }
 
 func collectHandlers(handlersDir string) []string {
