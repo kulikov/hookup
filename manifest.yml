@@ -1,0 +1,17 @@
+info:
+  name: webhooker
+  description: Webhook handling service
+  version: 1.0
+  category: tools
+  owner:
+    name: Dmitry Kulikov
+    email: kulikov.dm@gmail.com
+
+build:
+  - debian: {}
+
+deploy:
+  debian:
+    cluster:
+      qa: graphite.qa.inn.ru
+      live: graphite.lux.inn.eu
