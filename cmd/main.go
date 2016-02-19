@@ -1,12 +1,13 @@
 package main
 
 import (
-	"./hookup"
-	"github.com/codegangsta/cli"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/codegangsta/cli"
+	"github.com/kulikov/hookup"
 )
 
 func main() {
