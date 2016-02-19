@@ -15,7 +15,7 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "webhooker"
+	app.Name = "hookup"
 	app.Usage = "Start Webhook Server"
 
 	app.Flags = []cli.Flag{
@@ -26,18 +26,22 @@ func main() {
 		cli.StringFlag{
 			Name:  "handlers",
 			Usage: "Path to dir with webhook handlers scripts",
-			Value: "/etc/webhooker.d/",
+			Value: "/etc/hookup.d/",
 		},
 	}
 
 	app.Action = func(c *cli.Context) {
-		StartWebHookServer(c.Int("port"), c.String("handlers"))
+		StartWebhookServer(c.Int("port"), func(source string, eventType string, payload string) {
+			for _, cmd := range findHandlerCmds(c.String("handlers")) {
+				go execHandler(cmd, source, eventType, payload)
+			}
+		})
 	}
 
 	app.Run(os.Args)
 }
 
-func StartWebHookServer(port int, handlersDir string) {
+func StartWebhookServer(port int, handler func(source string, eventType string, payload string)) {
 	ec := echo.New()
 	ec.Use(middleware.Logger())
 	ec.Use(middleware.Recover())
@@ -50,9 +54,7 @@ func StartWebHookServer(port int, handlersDir string) {
 
 		log.Printf("Receive github event '%s': \n%s\n", eventType, string(payload))
 
-		for _, handler := range collectHandlers(handlersDir) {
-			go runHandler(handler, "github", eventType, string(payload))
-		}
+		handler("github", eventType, string(payload))
 
 		return err
 	})
@@ -62,7 +64,7 @@ func StartWebHookServer(port int, handlersDir string) {
 	ec.Run(":" + strconv.Itoa(port))
 }
 
-func collectHandlers(handlersDir string) []string {
+func findHandlerCmds(handlersDir string) []string {
 	handlers := make([]string, 0)
 
 	err := filepath.Walk(handlersDir, func(path string, f os.FileInfo, err error) error {
@@ -79,7 +81,7 @@ func collectHandlers(handlersDir string) []string {
 	return handlers
 }
 
-func runHandler(handler string, source string, eventType string, payload string) {
+func execHandler(handler string, source string, eventType string, payload string) {
 	log.Printf("Run %s", handler)
 
 	out, err := exec.Command("/bin/bash", handler, "--source", source, "--event", eventType, "--payload", payload).CombinedOutput()

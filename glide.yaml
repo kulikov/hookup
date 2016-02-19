@@ -1,0 +1,6 @@
+package: github.com/kulikov/hookup
+import:
+- package: github.com/labstack/echo
+  subpackages:
+    - middleware
+- package: github.com/codegangsta/cli

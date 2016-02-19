@@ -1,0 +1,24 @@
+hash: 706416967ccecbd19c158695fd56c6ee5dd0a88cf5353bcb325008e4e777aee5
+updated: 2016-02-19T23:43:33.422544212+03:00
+imports:
+- name: github.com/codegangsta/cli
+  version: 5db74198dee1cfe60cf06a611d03a420361baad6
+- name: github.com/labstack/echo
+  version: 6914162d64dd26ccd90d7c8b00290364337c134c
+  subpackages:
+  - middleware
+- name: github.com/labstack/gommon
+  version: bfff5bf04688a4048a5cb4dd3b3f0697caaad19c
+  subpackages:
+  - log
+  - color
+- name: github.com/mattn/go-colorable
+  version: 9fdad7c47650b7d2e1da50644c1f4ba7f172f252
+- name: github.com/mattn/go-isatty
+  version: 56b76bdf51f7708750eac80fa38b952bb9f32639
+- name: golang.org/x/net
+  version: b6d7b1396ec874c3b00f6c84cd4301a17c56c8ed
+  subpackages:
+  - context
+  - websocket
+devImports: []
