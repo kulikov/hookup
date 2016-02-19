@@ -1,16 +1,12 @@
 package main
 
 import (
-	"io/ioutil"
+	"./hookup"
+	"github.com/codegangsta/cli"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
-
-	"github.com/codegangsta/cli"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func main() {
@@ -31,7 +27,7 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) {
-		StartWebhookServer(c.Int("port"), func(source string, eventType string, payload string) {
+		hookup.StartWebhookServer(c.Int("port"), func(source string, eventType string, payload string) {
 			for _, cmd := range findHandlerCmds(c.String("handlers")) {
 				go execHandler(cmd, source, eventType, payload)
 			}
@@ -39,29 +35,6 @@ func main() {
 	}
 
 	app.Run(os.Args)
-}
-
-func StartWebhookServer(port int, handler func(source string, eventType string, payload string)) {
-	ec := echo.New()
-	ec.Use(middleware.Logger())
-	ec.Use(middleware.Recover())
-
-	ec.Post("/github/events", func(c *echo.Context) error {
-		defer c.Request().Body.Close()
-
-		eventType := c.Request().Header.Get("X-GitHub-Event")
-		payload, err := ioutil.ReadAll(c.Request().Body)
-
-		log.Printf("Receive github event '%s': \n%s\n", eventType, string(payload))
-
-		handler("github", eventType, string(payload))
-
-		return err
-	})
-
-	log.Printf("Starting web hook server on :%v\n", port)
-
-	ec.Run(":" + strconv.Itoa(port))
 }
 
 func findHandlerCmds(handlersDir string) []string {
