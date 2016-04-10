@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
 )
 
@@ -15,11 +16,9 @@ func StartWebhookServer(port int, handler func(source string, eventType string, 
 	ec.Use(middleware.Logger())
 	ec.Use(middleware.Recover())
 
-	ec.Post("/github/events", func(c *echo.Context) error {
-		defer c.Request().Body.Close()
-
-		eventType := c.Request().Header.Get("X-GitHub-Event")
-		payload, err := ioutil.ReadAll(c.Request().Body)
+	ec.Post("/github/events", func(c echo.Context) error {
+		eventType := c.Request().Header().Get("X-GitHub-Event")
+		payload, err := ioutil.ReadAll(c.Request().Body())
 
 		log.Printf("Receive github event '%s': \n%s\n", eventType, string(payload))
 
@@ -30,5 +29,5 @@ func StartWebhookServer(port int, handler func(source string, eventType string, 
 
 	log.Printf("Starting web hook server on :%v\n", port)
 
-	ec.Run(":" + strconv.Itoa(port))
+	ec.Run(standard.New(":" + strconv.Itoa(port)))
 }
