@@ -1,24 +1,31 @@
 general:
   artifacts:
-    - $HOME/$CIRCLE_PROJECT_REPONAME/bin/*
+    - $WORK_DIR/bin/*
 
 machine:
   environment:
     GO15VENDOREXPERIMENT: 1
+    WORK_DIR: $HOME/.go_workspace/src/github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+
+checkout:
+  post:
+    - mkdir -p $WORK_DIR
+    - cp -R $HOME/$CIRCLE_PROJECT_REPONAME/* $WORK_DIR/
 
 dependencies:
   override:
     - go get github.com/Masterminds/glide
-    - pwd
-    - glide up
+    - glide up:
+        pwd: $WORK_DIR
 
 test:
   override:
     - go test
+        pwd: $WORK_DIR
 
 deployment:
   master:
     branch: master
     commands:
-      - pwd
       - go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go
+          pwd: $WORK_DIR
