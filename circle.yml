@@ -12,6 +12,10 @@ dependencies:
     - pwd
     - glide up
 
+test:
+  override:
+    - go test
+
 deployment:
   master:
     branch: master
