@@ -10,7 +10,7 @@ dependencies:
   override:
     - go get github.com/Masterminds/glide
     - pwd
-    - glide up -v
+    - glide up
 
 deployment:
   master:
