@@ -1,6 +1,6 @@
 general:
   artifacts:
-    - $WORK_DIR/bin/*
+    - "$WORK_DIR/bin/hookup"
 
 machine:
   environment:
@@ -15,17 +15,14 @@ checkout:
 dependencies:
   override:
     - go get github.com/Masterminds/glide
-    - glide up:
-        pwd: $WORK_DIR
+    - cd $WORK_DIR && glide up
 
 test:
   override:
-    - go test:
-        pwd: $WORK_DIR
+    - cd $WORK_DIR && go test
 
 deployment:
   master:
     branch: master
     commands:
-      - go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go:
-          pwd: $WORK_DIR
+      - cd $WORK_DIR && go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go
