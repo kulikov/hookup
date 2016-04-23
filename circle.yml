@@ -1,7 +1,3 @@
-general:
-  artifacts:
-    - $WORK_DIR/bin/hookup
-
 machine:
   environment:
     GO15VENDOREXPERIMENT: 1
@@ -25,4 +21,4 @@ deployment:
   master:
     branch: master
     commands:
-      - cd $WORK_DIR && go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go
+      - cd $WORK_DIR && go build -v -ldflags '-s -w' -o $CIRCLE_ARTIFACTS/ cmd/hookup.go
