@@ -1,3 +1,12 @@
+general:
+  artifacts:
+    - bin/hookup
+
+dependencies:
+  pre:
+    - go get github.com/Masterminds/glide
+    - glide up
+
 deployment:
   master:
     branch: master
