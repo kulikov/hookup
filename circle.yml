@@ -3,7 +3,7 @@ general:
     - bin/hookup
 
 dependencies:
-  pre:
+  override:
     - go get github.com/Masterminds/glide
     - glide up
 
@@ -11,4 +11,4 @@ deployment:
   master:
     branch: master
     commands:
-      - go build -ldflags '-s -w' -o bin/hookup cmd/hookup.go
+      - go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go
