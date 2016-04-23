@@ -20,12 +20,12 @@ dependencies:
 
 test:
   override:
-    - go test
+    - go test:
         pwd: $WORK_DIR
 
 deployment:
   master:
     branch: master
     commands:
-      - go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go
+      - go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go:
           pwd: $WORK_DIR
