@@ -1,5 +1,7 @@
 # HookUp
 
+[![Circle CI](https://circleci.com/gh/kulikov/hookup.svg?style=svg&circle-token=6f95ac3d3af195cfb6dc9ff09569b7828cb17133)](https://circleci.com/gh/kulikov/hookup)
+
 Simple http service, listen web hooks form:
 
  * github
