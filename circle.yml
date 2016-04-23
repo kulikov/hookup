@@ -21,4 +21,4 @@ deployment:
   master:
     branch: master
     commands:
-      - cd $WORK_DIR && go build -v -ldflags '-s -w' -o $CIRCLE_ARTIFACTS/ cmd/hookup.go
+      - cd $WORK_DIR && go build -v -ldflags '-s -w' -o $CIRCLE_ARTIFACTS/hookup cmd/hookup.go
