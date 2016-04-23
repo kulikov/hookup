@@ -10,11 +10,11 @@ dependencies:
   override:
     - go get github.com/Masterminds/glide
     - glide up
-      pwd: $HOME/$CIRCLE_PROJECT_REPONAME
+        pwd: $HOME/$CIRCLE_PROJECT_REPONAME
 
 deployment:
   master:
     branch: master
     commands:
       - go build -v -ldflags '-s -w' -o bin/hookup cmd/hookup.go
-        pwd: $HOME/$CIRCLE_PROJECT_REPONAME
+          pwd: $HOME/$CIRCLE_PROJECT_REPONAME
