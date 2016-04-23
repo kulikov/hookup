@@ -1,6 +1,6 @@
 general:
   artifacts:
-    - "$WORK_DIR/bin/hookup"
+    - $WORK_DIR/bin/hookup
 
 machine:
   environment:
@@ -10,7 +10,7 @@ machine:
 checkout:
   post:
     - mkdir -p $WORK_DIR
-    - cp -R $HOME/$CIRCLE_PROJECT_REPONAME/* $WORK_DIR/
+    - cp -Rfp $HOME/$CIRCLE_PROJECT_REPONAME/* $WORK_DIR/
 
 dependencies:
   override:
